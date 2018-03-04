@@ -1,6 +1,7 @@
 #include "player.hpp"
 
 //Eric Han's smallio change
+//Brad Justice smallerio change 
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
