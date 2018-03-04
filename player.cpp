@@ -17,6 +17,9 @@ Player::Player(Side side) {
      * precalculating things, etc.) However, remember that you will only have
      * 30 seconds.
      */
+    myBoard = new Board();
+    mySide = side;
+
 }
 
 /*
@@ -38,7 +41,21 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return nullptr.
  */
-Move *Player::doMove(Move *opponentsMove, int msLeft) {
+
+//returns the side of the other player.
+Side Player::getOppSide(Side side) {
+    if(side == WHITE) {
+        return BLACK;
+    }
+    else {
+        return WHITE;
+    }
+}
+
+Move* Player::doMove(Move *opponentsMove, int msLeft) {
+
+    myBoard->doMove(opponentsMove, getOppSide(mySide));
+
     /*
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
