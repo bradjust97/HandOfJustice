@@ -2,6 +2,7 @@
 // Hello world!
 /*
  * Make a standard 8x8 othello board and initialize it to the standard setup.
+ * This board will be gr8 m8.
  */
 Board::Board() {
     taken.set(3 + 8 * 3);
