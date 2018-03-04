@@ -22,6 +22,9 @@ Player::Player(Side side) {
      */
     myBoard = new Board();
     mySide = side;
+    rand = false;
+    greedy = true;
+    testingMinimax = false;
 
 }
 
@@ -103,11 +106,11 @@ Move* Player::doMove(Move *opponentsMove, int msLeft) {
     if(this->rand == true)
     {
         answer = this->doRandomMove();
-    }/*
+    }
     else if (this->greedy == true) 
     {
-        this->doGreedyMove();
-    }
+        answer = this->doGreedyMove();
+    }/*
     else
     {
         this->doMinMaxMove();
