@@ -102,6 +102,20 @@ bool Board::checkMove(Move *m, Side side) {
     return false;
 }
 
+//returns a vector of Move* containing all possible moves for a certain side
+Vector<Move*> Board::getAllMoves(Side side) {
+    Vector<Move*> moveArr = new Vector<Move*>();
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            Move move(i, j);
+            if (checkMove(&move, side)){
+                moveArr.push_back(&move);
+            } 
+        }
+    }
+    return moveArr;
+}
+
 /*
  * Modifies the board to reflect the specified move.
  */
