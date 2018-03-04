@@ -1,5 +1,8 @@
 #include "player.hpp"
-
+#include <cstdlib>
+#include <vector>
+#include <iostream>
+#include <stdlib.h>
 //Eric Han's smallio change
 //Brad Justice smallerio change 
 
@@ -52,13 +55,66 @@ Side Player::getOppSide(Side side) {
     }
 }
 
+Move* Player::doRandomMove(){
+
+    vector<Move*> possMoves = myBoard->getAllMoves(mySide);
+    int movei = std::rand() % (possMoves.size() - 1);
+    Move* answer = possMoves.at(movei);
+    return answer;
+}
+
+int Player::getScore(Board* theBoard){
+    if(mySide == BLACK)
+    {
+        return theBoard->countBlack();
+    }
+    else
+    {
+        return theBoard->countWhite();
+    }
+}
+
+
+Move* Player::doGreedyMove(){
+    vector<Move*> allPossMoves = myBoard->getAllMoves(mySide);
+    Move* bestMove;
+    int bestScore;
+    for (unsigned int i = 0; i < allPossMoves.size(); i++)
+    {
+        Move* testMove = allPossMoves.at(i);
+        Board* newBoard = myBoard->copy();
+        newBoard->doMove(testMove, mySide);
+        int newScore = this->getScore(newBoard);
+        if(newScore > bestScore)
+        {
+            bestScore = newScore;
+            bestMove = testMove;
+        }
+
+    }
+    return bestMove;
+}
+
+
 Move* Player::doMove(Move *opponentsMove, int msLeft) {
 
+    Move* answer = nullptr;
     myBoard->doMove(opponentsMove, getOppSide(mySide));
-
-    /*
+    if(this->rand == true)
+    {
+        answer = this->doRandomMove();
+    }/*
+    else if (this->greedy == true) 
+    {
+        this->doGreedyMove();
+    }
+    else
+    {
+        this->doMinMaxMove();
+    }
+    *
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    return nullptr;
+    return answer;
 }

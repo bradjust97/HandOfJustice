@@ -1,6 +1,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <vector>
 #include <bitset>
 #include "common.hpp"
 using namespace std;
@@ -24,6 +25,7 @@ public:
     bool isDone();
     bool hasMoves(Side side);
     bool checkMove(Move *m, Side side);
+    vector<Move*> getAllMoves(Side side);
     void doMove(Move *m, Side side);
     int count(Side side);
     int countBlack();

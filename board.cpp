@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include <vector>
 // Hello world!
 /*
  * Make a standard 8x8 othello board and initialize it to the standard setup.
@@ -103,8 +104,8 @@ bool Board::checkMove(Move *m, Side side) {
 }
 
 //returns a vector of Move* containing all possible moves for a certain side
-Vector<Move*> Board::getAllMoves(Side side) {
-    Vector<Move*> moveArr = new Vector<Move*>();
+vector<Move*> Board::getAllMoves(Side side) {
+    vector<Move*> moveArr;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Move move(i, j);

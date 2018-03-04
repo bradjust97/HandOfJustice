@@ -14,9 +14,14 @@ public:
 
     Side getOppSide(Side side);
     Move *doMove(Move *opponentsMove, int msLeft);
+    Move* doRandomMove();
+    int getScore(Board* theBoard);
+    Move* doGreedyMove();
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
+    bool greedy;
+    bool rand; 
     Board* myBoard;
     Side mySide;
 };
