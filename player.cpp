@@ -12,26 +12,79 @@
  * within 30 seconds.
  */
 Player::Player(Side side) {
-    // Will be set to true in test_minimax.cpp.
-    testingMinimax = false;
-
-    /*
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
     myBoard = new Board();
     mySide = side;
-    rand = false;
-    greedy = true;
+    rand = true;
+    greedy = false;
     testingMinimax = false;
-
 }
 
 /*
  * Destructor for the player.
  */
 Player::~Player() {
+}
+
+
+//returns the side of the other player.
+Side Player::getOppSide(Side side) {
+    if(side == WHITE) {
+        return BLACK;
+    }
+    else {
+        return WHITE;
+    }
+}
+
+Move* Player::doRandomMove(){
+    vector<Move*> possMoves = myBoard->getAllMoves(mySide);
+    if(possMoves.size() > 0) {
+        int movei = std::rand() % (possMoves.size());
+        Move* answer = possMoves[movei];
+        return answer;
+    }
+    else {
+        return nullptr;
+    }
+}
+
+int Player::getScore(Board* theBoard){
+    if(mySide == BLACK)
+    {
+        return theBoard->countBlack() - theBoard->countWhite();
+    }
+    else
+    {
+        return theBoard->countWhite() - theBoard->countBlack();
+    }
+}
+
+
+Move* Player::doGreedyMove() {
+    vector<Move*> allPossMoves = myBoard->getAllMoves(mySide);
+    
+    if(allPossMoves.size() > 0) {
+        Move* bestMove = allPossMoves[0];
+        Board* bestBoard = myBoard->copy();
+        bestBoard->doMove(bestMove, mySide);
+        int bestScore = this->getScore(bestBoard);
+        for (unsigned int i = 1; i < allPossMoves.size(); i++)
+        {
+            Move* testMove = allPossMoves[i];
+            Board* newBoard = myBoard->copy();
+            newBoard->doMove(testMove, mySide);
+            int newScore = this->getScore(newBoard);
+            if(newScore > bestScore)
+            {
+                bestScore = newScore;
+                bestMove = testMove;
+            }
+        }
+        return bestMove;
+    }
+    else {
+        return nullptr;
+    }
 }
 
 /*
@@ -47,62 +100,9 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return nullptr.
  */
-
-//returns the side of the other player.
-Side Player::getOppSide(Side side) {
-    if(side == WHITE) {
-        return BLACK;
-    }
-    else {
-        return WHITE;
-    }
-}
-
-Move* Player::doRandomMove(){
-
-    vector<Move*> possMoves = myBoard->getAllMoves(mySide);
-    int movei = std::rand() % (possMoves.size() - 1);
-    Move* answer = possMoves.at(movei);
-    return answer;
-}
-
-int Player::getScore(Board* theBoard){
-    if(mySide == BLACK)
-    {
-        return theBoard->countBlack();
-    }
-    else
-    {
-        return theBoard->countWhite();
-    }
-}
-
-
-Move* Player::doGreedyMove(){
-    vector<Move*> allPossMoves = myBoard->getAllMoves(mySide);
-    Move* bestMove;
-    int bestScore;
-    for (unsigned int i = 0; i < allPossMoves.size(); i++)
-    {
-        Move* testMove = allPossMoves.at(i);
-        Board* newBoard = myBoard->copy();
-        newBoard->doMove(testMove, mySide);
-        int newScore = this->getScore(newBoard);
-        if(newScore > bestScore)
-        {
-            bestScore = newScore;
-            bestMove = testMove;
-        }
-
-    }
-    return bestMove;
-}
-
-
 Move* Player::doMove(Move *opponentsMove, int msLeft) {
-
-    Move* answer = nullptr;
     myBoard->doMove(opponentsMove, getOppSide(mySide));
+    Move* answer;
     if(this->rand == true)
     {
         answer = this->doRandomMove();
@@ -110,14 +110,11 @@ Move* Player::doMove(Move *opponentsMove, int msLeft) {
     else if (this->greedy == true) 
     {
         answer = this->doGreedyMove();
-    }/*
+    }
     else
     {
-        this->doMinMaxMove();
+        //this->doMinMaxMove();
     }
-    *
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */
+    myBoard->doMove(answer, mySide);
     return answer;
 }

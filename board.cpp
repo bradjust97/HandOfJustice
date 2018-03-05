@@ -108,9 +108,9 @@ vector<Move*> Board::getAllMoves(Side side) {
     vector<Move*> moveArr;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Move move(i, j);
-            if (checkMove(&move, side)){
-                moveArr.push_back(&move);
+            Move* move = new Move(i, j);
+            if (checkMove(move, side)){
+                moveArr.push_back(move);
             } 
         }
     }
