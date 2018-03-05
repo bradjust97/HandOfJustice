@@ -13,6 +13,8 @@ public:
     ~Player();
 
     Side getOppSide(Side side);
+    Move* minimaxMove(int steps, Side side, Board* board);
+    int getMinimaxScore(int steps, Side side, Board* board);
     Move *doMove(Move *opponentsMove, int msLeft);
 
     // Flag to tell if the player is running within the test_minimax context

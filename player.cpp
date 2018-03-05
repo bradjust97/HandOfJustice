@@ -55,12 +55,13 @@ Side Player::getOppSide(Side side) {
 //looks at the board state, checks how many steps ahead. 
 //uses worstScore function to return worst score for each of the next moves. picks move with best worstScore. 
 Move* Player::minimaxMove(int steps, Side side, Board* board) {
-    vector<Move*> possMoves = board->getallMoves(side);
+    vector<Move*> possMoves = board->getAllMoves(side);
     Move* bestMove;
     if(possMoves.size() > 0) {
         bestMove = possMoves[0];
         for(int i = 1; i < possMoves.size(); i++) {
-            if(this->getWorstScore(steps, side, board, possMoves[i]) > this->getWorstScore(steps, side, board, bestMove)) {
+            if(this->getMinimaxScore(steps, side, board->copy()->doMove(possMoves[i], side)) > 
+                this->getMinimaxScore(steps, side, board->copy()->doMove(bestMove, side))) {
                 bestMove = possMoves[i];
             }
         }
@@ -72,60 +73,62 @@ Move* Player::minimaxMove(int steps, Side side, Board* board) {
     
 }
 
-//for some move on a board with a certain number of steps, determine the worst score possible.
-//this function only makes sense if last step is the other player's move
-int Player::getWorstScore(int steps, Side side, Board* board, Move* move) {
+//get the minimax score from this particular board state. 
+int Player::getMinimaxScore(int steps, Side side, Board* board) {
+    //return value. The max or min score of this particular move on the board. 
+    int score; 
+    //make a bool for if you are trying to max or minimize the final score. 
+    bool isMaxing;
+    if(side == mySide) {
+        isMaxing = true
+    }
+    else {
+        isMaxing = false;
+    }
 
-    //return value. The worst score of this particular move from this board. 
-    int worst; 
-
-    //get board after this player has moved. 
-    Board* afterMoveBoard = board->copy();
-    afterMoveBoard->doMove(move, side);
-
-    //get vector of all possible moves of the other player.
-    vector<Move*> possMoves = afterMoveBoard->getAllMoves(getOppSide(side));
+    //get vector of all possible moves that you can make. 
+    vector<Move*> possMoves = board->getAllMoves(side);
 
     //if there are possible moves, do stuff. 
     if(possMoves.size() != 0) {
         //base case
         //heuristic is the heuristic func, whatever it is.
         if(steps == 1) {
-            //create vector of boards after all possible last step moves.
-            vector<Board*> afterMoveBoards;
-            for(int i = 0; i < possMoves.size(); i++) {
-                Board* boardCopy = afterMoveBoard->copy();
-                boardCopy->doMove(possMoves[i], side);
-                afterMoveBoards.push_back(boardCopy);
-            }
-            //get worst possible score from the available last states. 
-            worst = heuristic(afterMoveBoards[0]);
-            int thisWorst;
-            for(int i = 1; i < possMoves.size(); i++) {
-                thisWorst = heuristic(possMoves[i]);
-                if(thisWorst < worst) {
-                    worst = thisWorst;
-                }
-            }
-            return worst;
+            //return the score of this particular board
+            return getScore(board);
         }
         else {
             //recursive step
-            worst = getWorstScore(steps-1, side, board, possMoves[0]);
-            int thisWorst;
-            for(int i = 1; i < possMoves.size(); i++) {
-                thisWorst = getWorstScore(steps-1, side, board, possMoves[i]);
-                if(thisWorst < worst) {
-                    worst = thisWorst;
+            score = getMinimaxScore(steps-1, this->getOppSide(side), board->copy()->doMove(possMoves[0], side));
+            int thisScore;
+            if(isMaxing) {
+                for(int i = 1; i < possMoves.size(); i++) {
+                    thisScore = getMinimaxScore(steps-1, this->getOppSide(side), board->copy()->doMove(possMoves[i], side));
+                    if(thisScore > score) {
+                        score = thisScore;
+                    }
                 }
             }
-            return worst;
+            else {
+                for(int i = 1; i < possMoves.size(); i++) {
+                    thisScore = getMinimaxScore(steps-1, side, board->copy()->doMove(possMoves[i], side));
+                    if(thisScore < score) {
+                        score = thisScore;
+                    }
+                }
+            }
+            return score;
         }
     }
     else {
-        //kinda stop gap. If there are no possible moves from this board state, 
-        //then that means you lost. Give super low score so that you know not to do it. 
-        return -100;
+        //kinda stop gap. If there are no possible moves from this board state and you are trying to max, that means
+        //maxxer lost. If you are minimizer and you lose, that's beneficial. 
+        if(isMaxing) {
+            return -100;
+        }
+        else {
+            return 100;
+        }
     }
 }
 
