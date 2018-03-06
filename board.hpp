@@ -4,6 +4,7 @@
 #include <vector>
 #include <bitset>
 #include "common.hpp"
+#include <vector>
 using namespace std;
 
 class Board {
