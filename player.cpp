@@ -14,8 +14,8 @@
 Player::Player(Side side) {
     myBoard = new Board();
     mySide = side;
-    rand = true;
-    greedy = false;
+    rand = false;
+    greedy = true;
     testingMinimax = false;
 }
 
@@ -23,6 +23,7 @@ Player::Player(Side side) {
  * Destructor for the player.
  */
 Player::~Player() {
+    delete myBoard;
 }
 
 
@@ -95,8 +96,10 @@ Move* Player::minimaxMove(int steps, Side side, Board* board) {
     if(possMoves.size() > 0) {
         bestMove = possMoves[0];
         for(int i = 1; i < possMoves.size(); i++) {
-            if(this->getMinimaxScore(steps, side, board->copy()->doMove(possMoves[i], side)) > 
-                this->getMinimaxScore(steps, side, board->copy()->doMove(bestMove, side))) {
+            Board* thisBoard = board->copy();
+            thisBoard->doMove(possMoves[i], side);
+            Board* bestBoard = board->copy();
+            if(this->getMinimaxScore(steps, side, thisBoard) > this->getMinimaxScore(steps, side, bestBoard)) {
                 bestMove = possMoves[i];
             }
         }
@@ -115,7 +118,7 @@ int Player::getMinimaxScore(int steps, Side side, Board* board) {
     //make a bool for if you are trying to max or minimize the final score. 
     bool isMaxing;
     if(side == mySide) {
-        isMaxing = true
+        isMaxing = true;
     }
     else {
         isMaxing = false;
@@ -127,26 +130,33 @@ int Player::getMinimaxScore(int steps, Side side, Board* board) {
     //if there are possible moves, do stuff. 
     if(possMoves.size() != 0) {
         //base case
-        //heuristic is the heuristic func, whatever it is.
         if(steps == 1) {
             //return the score of this particular board
             return getScore(board);
         }
         else {
             //recursive step
-            score = getMinimaxScore(steps-1, this->getOppSide(side), board->copy()->doMove(possMoves[0], side));
+            Board* afterTestMove = board->copy();
+            afterTestMove->doMove(possMoves[0], side);
+            score = getMinimaxScore(steps-1, this->getOppSide(side), afterTestMove);
             int thisScore;
             if(isMaxing) {
+                //if you are trying to max your score on this step, pick next step with biggest score
                 for(int i = 1; i < possMoves.size(); i++) {
-                    thisScore = getMinimaxScore(steps-1, this->getOppSide(side), board->copy()->doMove(possMoves[i], side));
+                    Board* thisBoard = board->copy();
+                    thisBoard->doMove(possMoves[i], side);
+                    thisScore = getMinimaxScore(steps-1, this->getOppSide(side), thisBoard);
                     if(thisScore > score) {
                         score = thisScore;
                     }
                 }
             }
             else {
+                //if not trying to max, pick next step with smallest score. 
                 for(int i = 1; i < possMoves.size(); i++) {
-                    thisScore = getMinimaxScore(steps-1, side, board->copy()->doMove(possMoves[i], side));
+                    Board* thisBoard = board->copy();
+                    thisBoard->doMove(possMoves[i], side);
+                    thisScore = getMinimaxScore(steps-1, side, thisBoard);
                     if(thisScore < score) {
                         score = thisScore;
                     }
@@ -191,11 +201,10 @@ Move* Player::doMove(Move *opponentsMove, int msLeft) {
     {
         answer = this->doGreedyMove();
     }
-    else
+    else if (this->testingMinimax == true)
     {
-        //this->doMinMaxMove();
+        answer = this->minimaxMove(2, mySide, myBoard);
     }
     myBoard->doMove(answer, mySide);
     return answer;
 }
->>>>>>> master
