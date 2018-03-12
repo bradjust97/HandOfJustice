@@ -11,3 +11,19 @@ Minimax performs the minimax algorithm. At the moment, it is a 2-plie player. Th
 player.cpp doMove() function. 
 
 rand corresponds to a player that plays entirely random valid moves. 
+
+================================
+
+Eric Han's contributions
+ - Wrote minimax algorithm
+ - Wrote getAllMoves() function
+
+Bradley Justice's contributions
+ - Wrote player's constructor
+ - Wrote greedy algorithm 
+ - Wrote random algorithm
+ - Wrote and improved heuristic
+ 
+ ================================
+ Our update for assignment 10: 
+ We updated the heuristic. We believe that will make the AI prioritize more critical areas, such as the sides and corners, and deprioritize squares that are less useful in the long term. 
