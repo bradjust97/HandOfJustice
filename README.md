@@ -26,4 +26,4 @@ Bradley Justice's contributions
  
  ================================
  Our update for assignment 10: 
- We updated the heuristic. We believe that will make the AI prioritize more critical areas, such as the sides and corners, and deprioritize squares that are less useful in the long term. 
+ We updated the heuristic. We believe that will make the AI prioritize more critical areas, such as the corners, thereby increasing odds of winning in the long term. 
