@@ -15,8 +15,8 @@ Player::Player(Side side) {
     myBoard = new Board();
     mySide = side;
     rand = false;
-    greedy = true;
-    testingMinimax = false;
+    greedy = false;
+    testingMinimax = true;
 }
 
 /*
@@ -50,14 +50,26 @@ Move* Player::doRandomMove(){
 }
 
 int Player::getScore(Board* theBoard){
+    int ans;
     if(mySide == BLACK)
     {
-        return theBoard->countBlack() - theBoard->countWhite();
+        int ans = theBoard->countBlack() - theBoard->countWhite();
+        if (theBoard->hasChecker(mySide, 0,0) || theBoard->hasChecker(mySide, 0,7) ||
+            theBoard->hasChecker(mySide, 7,0) || theBoard->hasChecker(mySide, 7,7))
+        {
+            ans += 10;
+        }
     }
     else
     {
-        return theBoard->countWhite() - theBoard->countBlack();
+        int ans = theBoard->countWhite() - theBoard->countBlack();
+        if (theBoard->hasChecker(mySide, 0,0) || theBoard->hasChecker(mySide, 0,7) ||
+            theBoard->hasChecker(mySide, 7,0) || theBoard->hasChecker(mySide, 7,7))
+        {
+            ans += 10;
+        }
     }
+    return ans;
 }
 
 

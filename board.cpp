@@ -195,3 +195,9 @@ void Board::setBoard(char data[]) {
         }
     }
 }
+
+//returns if a position on the board has a checker of color side. 
+//x indices [0, 7] and y indices [0, 7]
+bool Board::hasChecker(Side side, int x, int y) {
+    return get(side, x, y);
+}
