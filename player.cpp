@@ -49,25 +49,30 @@ Move* Player::doRandomMove(){
     }
 }
 
-int Player::getScore(Board* theBoard){
+int Player::getScore(Board* theBoard, Side side){
     int ans;
-    if(mySide == BLACK)
-    {
-        int ans = theBoard->countBlack() - theBoard->countWhite();
-        if (theBoard->hasChecker(mySide, 0,0) || theBoard->hasChecker(mySide, 0,7) ||
-            theBoard->hasChecker(mySide, 7,0) || theBoard->hasChecker(mySide, 7,7))
-        {
-            ans += 10;
-        }
+    if(side == BLACK) {
+        ans = theBoard->countBlack() - theBoard->countWhite();
     }
-    else
+    else {
+        ans = theBoard->countWhite() - theBoard->countBlack();
+    }
+    //for each corner obtained, +10 to score. 
+    if(theBoard->hasChecker(side, 0,0))
     {
-        int ans = theBoard->countWhite() - theBoard->countBlack();
-        if (theBoard->hasChecker(mySide, 0,0) || theBoard->hasChecker(mySide, 0,7) ||
-            theBoard->hasChecker(mySide, 7,0) || theBoard->hasChecker(mySide, 7,7))
-        {
-            ans += 10;
-        }
+        ans += 10;
+    }
+    if (theBoard->hasChecker(side, 0,7))
+    {
+        ans += 10;
+    }
+    if (theBoard->hasChecker(side, 7,0))
+    {
+        ans += 10;
+    }
+    if (theBoard->hasChecker(side, 7,7))
+    {
+        ans += 10;
     }
     return ans;
 }
@@ -80,13 +85,13 @@ Move* Player::doGreedyMove() {
         Move* bestMove = allPossMoves[0];
         Board* bestBoard = myBoard->copy();
         bestBoard->doMove(bestMove, mySide);
-        int bestScore = this->getScore(bestBoard);
+        int bestScore = this->getScore(bestBoard, mySide);
         for (unsigned int i = 1; i < allPossMoves.size(); i++)
         {
             Move* testMove = allPossMoves[i];
             Board* newBoard = myBoard->copy();
             newBoard->doMove(testMove, mySide);
-            int newScore = this->getScore(newBoard);
+            int newScore = this->getScore(newBoard, mySide);
             if(newScore > bestScore)
             {
                 bestScore = newScore;
@@ -111,7 +116,7 @@ Move* Player::minimaxMove(int steps, Side side, Board* board) {
             Board* thisBoard = board->copy();
             thisBoard->doMove(possMoves[i], side);
             Board* bestBoard = board->copy();
-            if(this->getMinimaxScore(steps, side, thisBoard) > this->getMinimaxScore(steps, side, bestBoard)) {
+            if(this->getMinimaxScore(steps, this->getOppSide(side), thisBoard) > this->getMinimaxScore(steps, this->getOppSide(side), bestBoard)) {
                 bestMove = possMoves[i];
             }
         }
@@ -144,7 +149,7 @@ int Player::getMinimaxScore(int steps, Side side, Board* board) {
         //base case
         if(steps == 1) {
             //return the score of this particular board
-            return getScore(board);
+            return getScore(board, side);
         }
         else {
             //recursive step

@@ -17,7 +17,7 @@ public:
     int getMinimaxScore(int steps, Side side, Board* board);
     Move *doMove(Move *opponentsMove, int msLeft);
     Move* doRandomMove();
-    int getScore(Board* theBoard);
+    int getScore(Board* theBoard, Side side);
     Move* doGreedyMove();
 
     // Flag to tell if the player is running within the test_minimax context
